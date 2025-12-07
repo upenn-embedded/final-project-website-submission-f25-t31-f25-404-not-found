@@ -12,7 +12,7 @@
 | Kefei Bao        | kefeib@seas.upenn.edu   |
 
 **GitHub Repository URL:**  
-[https://github.com/upenn-embedded/final-project-f25-404-not-found](https://github.com/upenn-embedded/final-project-f25-404-not-found)
+[hhttps://github.com/upenn-embedded/final-project-website-submission-f25-t31-f25-404-not-found.git](https://github.com/upenn-embedded/final-project-website-submission-f25-t31-f25-404-not-found.git)
 
 **GitHub Pages Website URL:** [for final submission]*
 
@@ -26,26 +26,21 @@ Our **Virtual Drum Kit** transforms natural hand and foot motion into instant, e
 No sticks. No drum set. Just movement — and music.
 
 Precision IMUs capture every strike,\
-low-latency wireless links deliver it flawlessly,
+low-latency wireless links deliver it flawlessly,\
 and an ESP32 audio engine fires crisp hi-hats, sharp snares, and deep kicks through a custom three-speaker box.
 
-A vibrant LCD display shows status and hit force.
-A dedicated mute button gives instant control.
+A vibrant LCD display shows status and hit force.\
+A dedicated mute button gives instant control.\
 A power-bank “drumstick” brings back the feel of real drumming.
 
 And with our interactive Python GUI, your performance becomes visual — live hit tracking, score matching, and accuracy feedback at a glance.
 
-**Portable. Immersive. Ready anywhere.**
+**Portable. Immersive. Ready anywhere.**\
 This is drumming, redesigned for the modern world.
 
 ### 1. Video
 
 [Virtual drum Kit](https://drive.google.com/file/d/1_NklKkRG3vqXawE7z8RuyhH2ok54xu6O/view?usp=sharing)
-
-- The video must demonstrate your key functionality.  
-- The video must be 5 minutes or less.  
-- Ensure your video link is accessible to the teaching team. Unlisted YouTube videos or Google Drive uploads with SEAS account access work well.  
-- Points will be removed if the audio quality is poor — say, if you filmed your video in a noisy electrical engineering lab.
 
 ### 2. Images
 
