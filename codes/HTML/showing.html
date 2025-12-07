@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Virtual Drum Kit</title>
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg1:#071426;
+    --bg2:#0f3057;
+    --accent:#00E5FF;
+    --muted:#8795a1;
+    --glass: rgba(255,255,255,0.05);
+    --card:#0b2033;
+    --success: #26A69A;
+    --danger: #FF6B6B;
+    --neutral: #7C83FF;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; font-family:'Poppins',system-ui,Segoe UI,Roboto,Arial;
+    background: radial-gradient(1200px 600px at 10% 10%, rgba(2,12,27,0.7), transparent 10%),
+                linear-gradient(135deg, var(--bg1), var(--bg2));
+    color: #e8f0f6;
+    -webkit-font-smoothing:antialiased;
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:28px;
+  }
+
+  .app {
+    width:1100px;
+    max-width:98vw;
+    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    border-radius:18px;
+    padding:28px;
+    box-shadow: 0 20px 60px rgba(2,10,20,0.6), inset 0 1px 0 rgba(255,255,255,0.02);
+    border: 1px solid rgba(255,255,255,0.03);
+  }
+
+  header {
+    display:flex; align-items:center; justify-content:space-between; gap:16px;
+  }
+  .title {
+    display:flex; flex-direction:column; gap:4px;
+  }
+  h1{ margin:0; font-size:26px; letter-spacing:0.4px; font-weight:700}
+  .subtitle{ color:var(--muted); font-size:13px }
+
+  .controls {
+    display:flex; gap:10px; align-items:center;
+  }
+  .ws-input {
+    background:var(--glass);
+    border:1px solid rgba(255,255,255,0.04);
+    padding:8px 12px; border-radius:10px; color:inherit;
+    min-width:260px; outline:none;
+  }
+  .tiny { font-size:12px; color:var(--muted) }
+
+  button.btn {
+    background: linear-gradient(180deg,#3ea0ff,#2b7fe0);
+    color:white; border:none; padding:10px 16px; border-radius:12px; cursor:pointer;
+    font-weight:600; box-shadow: 0 8px 20px rgba(41,92,255,0.12);
+    transition: transform .15s ease, box-shadow .15s;
+  }
+  button.btn.secondary {
+    background: linear-gradient(180deg,#222a3a,#16202b);
+    box-shadow:none; color:var(--accent); border:1px solid rgba(0,230,255,0.06);
+  }
+  button.btn:active{ transform: translateY(2px); }
+
+  main {
+    margin-top:18px; display:grid;
+    grid-template-columns: 1fr 420px;
+    gap:20px;
+  }
+
+  /* Left big area: drums + sheet */
+  .left {
+    padding:18px; border-radius:12px; background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.00));
+    border:1px solid rgba(255,255,255,0.02);
+  }
+
+  .drum-row {
+    display:flex; justify-content:center; gap:40px; align-items:center;
+    margin-top:12px;
+  }
+  .drum {
+    width:170px; height:170px; border-radius:50%;
+    background: radial-gradient(circle at 30% 20%, #2b3b4d, #07122a 60%);
+    display:flex; align-items:center; justify-content:center; color: #fff;
+    font-weight:700; font-size:18px; position:relative;
+    box-shadow: 0 20px 40px rgba(2,12,27,0.6), 0 8px 28px rgba(0,0,0,0.5);
+    transition: transform .12s ease, box-shadow .12s ease, background .12s;
+    border: 1px solid rgba(255,255,255,0.03);
+  }
+
+  .label-small { position:absolute; top:12px; left:12px; font-size:12px; color:var(--muted); font-weight:600; text-transform:uppercase; letter-spacing:0.9px; }
+
+  /* neutral hit pulse */
+  @keyframes neutralPulse {
+    0% { box-shadow: 0 0 0 rgba(124,131,255,0.16); transform:scale(1); }
+    60% { box-shadow: 0 0 60px rgba(124,131,255,0.06); transform:scale(1.05); }
+    100% { box-shadow: none; transform:scale(1); }
+  }
+  /* success */
+  @keyframes successBurst {
+    0% { transform:scale(1); box-shadow: 0 0 0 rgba(38,166,154,0.0); background: radial-gradient(circle at 40% 30%, #33c9b0,#1b7a6a); }
+    40% { transform:scale(1.22); box-shadow: 0 0 40px rgba(38,166,154,0.28); }
+    100% { transform:scale(1); box-shadow: none; }
+  }
+  /* danger */
+  @keyframes dangerFlash {
+    0% { transform:scale(1); box-shadow: 0 0 0 rgba(255,107,107,0.0); background: radial-gradient(circle at 40% 30%, #ff8a8a,#b33b3b); }
+    40% { transform:scale(1.18); box-shadow: 0 0 40px rgba(255,107,107,0.28); }
+    100% { transform:scale(1); box-shadow: none; }
+  }
+
+  .hit-neutral { animation: neutralPulse 260ms ease-in-out; }
+  .hit-success { animation: successBurst 260ms ease-in-out; }
+  .hit-fail { animation: dangerFlash 260ms ease-in-out; }
+
+  /* Sheet area below drums */
+  .sheet-area {
+    margin-top:22px; padding:14px; border-radius:12px; background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.00));
+    border:1px solid rgba(255,255,255,0.02);
+  }
+  .sheet-title { font-size:14px; color:var(--muted); margin-bottom:8px; font-weight:600; }
+
+  .sheet-steps {
+    display:flex; gap:8px; flex-wrap:wrap; justify-content:center;
+  }
+  .step {
+    min-width:68px; padding:8px 10px; border-radius:8px;
+    background: rgba(255,255,255,0.03); color:#cfd8e3; font-weight:700; letter-spacing:0.8px;
+    transition: transform .18s, background .18s, box-shadow .18s;
+    display:inline-flex; align-items:center; justify-content:center;
+    font-size:14px;
+  }
+  .step.current {
+    transform:translateY(-6px);
+    background: linear-gradient(90deg,#ffdd57,#ffd15c);
+    color:#07202a;
+    box-shadow: 0 10px 30px rgba(255,209,92,0.14);
+  }
+  .step.correct {
+    background: linear-gradient(90deg,#81e6c2,#36c6a0);
+    color: #022a25;
+    box-shadow: 0 10px 30px rgba(38,166,154,0.12);
+  }
+  .step.wrong {
+    background: linear-gradient(90deg,#ff9a9a,#ff6b6b);
+    color:#3a0808;
+    box-shadow: 0 10px 30px rgba(255,107,107,0.12);
+  }
+
+  /* Right column: stats and file controls */
+  .right {
+    padding:18px; border-radius:12px; background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.00));
+    border:1px solid rgba(255,255,255,0.02);
+    display:flex; flex-direction:column; gap:14px; align-items:stretch;
+  }
+
+  .panel {
+    padding:12px; border-radius:10px; background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.00));
+    border:1px solid rgba(255,255,255,0.02);
+  }
+  .big-stat { font-size:36px; font-weight:700; color:var(--accent); text-shadow:0 6px 18px rgba(0,229,255,0.06); }
+  .small { color:var(--muted); font-size:13px; margin-top:6px }
+
+  .file-row { display:flex; gap:8px; align-items:center; }
+  .file-label { padding:10px 12px; border-radius:10px; background: rgba(0,0,0,0.22); color:#e6f7ff; font-weight:600; flex:1; text-align:left; overflow:hidden; text-overflow:ellipsis; white-space:nowrap }
+  input[type=file] { display:none; }
+
+  .legend { display:flex; gap:8px; align-items:center; margin-top:6px}
+  .legend .dot { width:14px; height:14px; border-radius:4px; }
+  .dot.good { background:linear-gradient(90deg,#81e6c2,#36c6a0) }
+  .dot.bad { background:linear-gradient(90deg,#ff9a9a,#ff6b6b) }
+  .dot.neu { background:linear-gradient(90deg,#7c83ff,#99a3ff) }
+
+  footer { margin-top:12px; color:var(--muted); font-size:12px; text-align:center }
+</style>
+</head>
+<body>
+  <div class="app" role="application" aria-label="Virtual Drum Kit App">
+    <header>
+      <div class="title">
+        <h1>404 NOT FOUND</h1>
+        <div class="subtitle">Virtual Drum Kit • Sheet Matcher • *.txt Import</div>
+      </div>
+
+      <div class="controls">
+        <input id="wsAddr" class="ws-input" value="ws://10.0.0.13:81" title="Enter WebSocket address (e.g. ws://10.0.0.13:81)" />
+        <button id="connectBtn" class="btn">Connect</button>
+        <button id="disconnectBtn" class="btn secondary">Disconnect</button>
+      </div>
+    </header>
+
+    <main>
+      <section class="left">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div style="font-size:14px;color:var(--muted)">Drum Pads</div>
+          <div class="tiny" id="connStatus">Not connected</div>
+        </div>
+
+        <div class="drum-row">
+          <div id="L_HAND" class="drum"><div class="label-small">LH</div>Left Hand</div>
+          <div id="R_HAND" class="drum"><div class="label-small">RH</div>Right Hand</div>
+          <div id="R_FOOT" class="drum"><div class="label-small">RF</div>Right Foot</div>
+        </div>
+
+        <div class="sheet-area">
+          <div class="sheet-title">Sheet (enter tokens: <span style="color:var(--accent)">LH RH RF</span>)</div>
+          <textarea id="sheetInput" rows="2" style="width:100%; margin-top:8px; padding:12px; border-radius:10px; border:none; background:rgba(0,0,0,0.20); color:inherit; font-weight:600; outline:none; resize:vertical" placeholder="e.g. LH RH LH RF RH"></textarea>
+
+          <div style="display:flex; gap:10px; margin-top:12px; align-items:center; justify-content:center">
+            <button id="startPauseBtn" class="btn">Start</button>
+            <button id="resetBtn" class="btn secondary">Reset</button>
+            <label style="cursor:pointer">
+              <input id="filePicker" type="file" accept=".txt" />
+              <span class="btn">Import .txt</span>
+            </label>
+          </div>
+
+          <div id="sheetDisplay" class="sheet-steps" style="margin-top:16px"></div>
+        </div>
+      </section>
+
+      <aside class="right">
+        <div class="panel">
+          <div style="display:flex; justify-content:space-between; align-items:center">
+            <div>
+              <div style="font-size:13px; color:var(--muted)">Progress</div>
+              <div class="small" id="progressText">0 / 0</div>
+            </div>
+            <div style="text-align:right">
+              <div style="font-size:13px; color:var(--muted)">Attempts</div>
+              <div class="big-stat" id="attempts">0</div>
+            </div>
+          </div>
+          <div style="display:flex; gap:8px; margin-top:10px; justify-content:space-between">
+            <div>
+              <div style="font-size:13px;color:var(--muted)">Correct</div>
+              <div style="font-weight:700; font-size:20px; color:var(--success)" id="correctCount">0</div>
+            </div>
+            <div>
+              <div style="font-size:13px;color:var(--muted)">Wrong</div>
+              <div style="font-weight:700; font-size:20px; color:var(--danger)" id="wrongCount">0</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div style="font-size:13px;color:var(--muted)">Accuracy</div>
+          <div style="display:flex; align-items:center; gap:12px; margin-top:8px">
+            <div style="font-size:28px; font-weight:700; color:var(--accent)" id="accuracy">0%</div>
+            <div class="small">Final score stays after sheet finishes</div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div style="font-size:13px;color:var(--muted)">Legend</div>
+          <div class="legend">
+            <div style="display:flex; align-items:center; gap:8px">
+              <div class="dot neu"></div><div class="small">Neutral (animation)</div>
+            </div>
+            <div style="display:flex; align-items:center; gap:8px">
+              <div class="dot good"></div><div class="small">Correct (green)</div>
+            </div>
+            <div style="display:flex; align-items:center; gap:8px">
+              <div class="dot bad"></div><div class="small">Wrong (red)</div>
+            </div>
+          </div>
+
+          <div id="fileInfo" style="margin-top:10px; color:var(--muted)">Supported file: <strong>.txt</strong> (space-separated tokens: LH RH RF)</div>
+        </div>
+      </aside>
+    </main>
+
+    <footer>
+      <div style="margin-top:14px; color:var(--muted)">Tip: set WebSocket address and press Connect. The pads always animate on incoming hits.</div>
+    </footer>
+  </div>
+
+<script>
+/* ==========================
+   Configuration / State
+   ========================== */
+const WS_DEFAULT = document.getElementById('wsAddr').value || 'ws://10.0.0.13:81';
+let ws = null;
+let connected = false;
+
+let sheet = [];        // array of token strings: LH RH RF
+let stepState = [];    // 'pending' | 'correct' | 'wrong'
+let index = 0;
+let attempts = 0, correct = 0, wrong = 0;
+let matching = false;
+
+/* ==========================
+   Helpers: UI updates
+   ========================== */
+function setConnStatus(text) {
+  document.getElementById('connStatus').innerText = text;
+}
+function renderSheet() {
+  const c = document.getElementById('sheetDisplay');
+  c.innerHTML = '';
+  stepState = stepState.slice(0, sheet.length);
+  for (let i=0;i<sheet.length;i++){
+    const s = document.createElement('div');
+    s.className = 'step';
+    s.innerText = sheet[i];
+    if (i === index && matching) s.classList.add('current');
+    if (stepState[i] === 'correct') s.classList.add('correct');
+    if (stepState[i] === 'wrong') s.classList.add('wrong');
+    c.appendChild(s);
+  }
+  updateProgress();
+}
+function updateProgress() {
+  document.getElementById('progressText').innerText = `${Math.min(index, sheet.length)} / ${sheet.length}`;
+  document.getElementById('attempts').innerText = `${attempts}`;
+  document.getElementById('correctCount').innerText = `${correct}`;
+  document.getElementById('wrongCount').innerText = `${wrong}`;
+  const acc = attempts === 0 ? 0 : Math.round((correct / attempts) * 100);
+  document.getElementById('accuracy').innerText = `${acc}%`;
+}
+
+/* ==========================
+   Drum animation logic
+   ========================== */
+function neutralPulse(elem) {
+  elem.classList.remove('hit-success','hit-fail');
+  elem.classList.add('hit-neutral');
+  setTimeout(()=>elem.classList.remove('hit-neutral'), 280);
+}
+function successFlash(elem) {
+  elem.classList.remove('hit-neutral','hit-fail');
+  elem.classList.add('hit-success');
+  setTimeout(()=>elem.classList.remove('hit-success'), 280);
+}
+function failFlash(elem) {
+  elem.classList.remove('hit-neutral','hit-success');
+  elem.classList.add('hit-fail');
+  setTimeout(()=>elem.classList.remove('hit-fail'), 280);
+}
+
+/* animate pad with judgement if provided */
+function animatePad(token, judgement=null){
+  // token is LH/RH/RF or L_HAND etc — normalize
+  let id = mapTokenToId(token);
+  const el = document.getElementById(id);
+  if (!el) return;
+  // Always show some pulse
+  if (judgement === 'correct') successFlash(el);
+  else if (judgement === 'wrong') failFlash(el);
+  else neutralPulse(el);
+}
+
+/* ==========================
+   Token Mapping
+   ========================== */
+function mapTokenToId(tok) {
+  // Accept both LH/RH/RF and L_HAND etc.
+  if (!tok) return null;
+  tok = tok.trim().toUpperCase();
+  if (tok === 'LH' || tok === 'L_HAND' || tok === 'L-HAND' ) return 'L_HAND';
+  if (tok === 'RH' || tok === 'R_HAND' || tok === 'R-HAND' ) return 'R_HAND';
+  if (tok === 'RF' || tok === 'R_FOOT' || tok === 'R-FOOT') return 'R_FOOT';
+  // if user accidentally sends L_HAND from ESP32 keep as is
+  if (tok === 'L_HAND' || tok === 'R_HAND' || tok === 'R_FOOT') return tok;
+  return null;
+}
+
+/* ==========================
+   Matching logic (start/pause/reset)
+   ========================== */
+function startPauseToggle(){
+  if (sheet.length === 0) {
+    alert('Please load a sheet first (input or .txt).');
+    return;
+  }
+  matching = !matching;
+  document.getElementById('startPauseBtn').innerText = matching ? 'Pause' : 'Start';
+  renderSheet();
+}
+
+function resetSheet(){
+  matching = false;
+  index = 0;
+  attempts = 0; correct = 0; wrong = 0;
+  stepState = new Array(sheet.length).fill('pending');
+  document.getElementById('startPauseBtn').innerText = 'Start';
+  renderSheet();
+  updateProgress();
+}
+
+/* handle an incoming hit token (from WebSocket) */
+function onHitReceived(rawToken) {
+  const token = normalizeIncomingToken(rawToken);
+  // Always animate at least neutral
+  if (!matching || index >= sheet.length) {
+    // not matching: neutral pulse
+    animatePad(token, null);
+    return;
+  }
+
+  // During matching: compare current expected
+  const expectedToken = sheet[index];
+  attempts++;
+  if (mapTokenToId(token) === mapTokenToId(expectedToken)) {
+    // correct
+    correct++;
+    stepState[index] = 'correct';
+    animatePad(token, 'correct');
+  } else {
+    // wrong
+    wrong++;
+    stepState[index] = 'wrong';
+    animatePad(token, 'wrong');
+  }
+  index++;
+  // if done:
+  if (index >= sheet.length) {
+    matching = false;
+    document.getElementById('startPauseBtn').innerText = 'Start';
+  }
+  renderSheet();
+  updateProgress();
+}
+
+/* normalize token from WS or user input */
+function normalizeIncomingToken(t) {
+  // Accept values like L_HAND (from ESP32) or LH from other sources
+  if (!t) return t;
+  t = t.trim();
+  // convert LH->L_HAND for internal comparisons
+  if (/^LH$/i.test(t)) return 'L_HAND';
+  if (/^RH$/i.test(t)) return 'R_HAND';
+  if (/^RF$/i.test(t)) return 'R_FOOT';
+  // pass-through
+  return t;
+}
+
+/* ==========================
+   File import & input parsing
+   ========================== */
+document.getElementById('filePicker').addEventListener('change', function(e){
+  const f = this.files[0];
+  if (!f) return;
+  if (!f.name.toLowerCase().endsWith('.txt')) {
+    alert('Only .txt files supported. File should contain space-separated tokens like: LH RH RF');
+    return;
+  }
+  const reader = new FileReader();
+  reader.onload = function(evt){
+    const txt = evt.target.result;
+    document.getElementById('sheetInput').value = txt.trim();
+    loadSheetFromText(txt);
+  };
+  reader.readAsText(f);
+});
+
+function loadSheetFromText(text){
+  const tokens = text.trim().split(/\s+/).map(s=>s.toUpperCase()).filter(Boolean);
+  sheet = tokens.map(tok => {
+    // map LH->L_HAND etc for display consistency
+    if (tok === 'LH') return 'LH';
+    if (tok === 'RH') return 'RH';
+    if (tok === 'RF') return 'RF';
+    // if user wrote L_HAND keep LH shorthand
+    if (tok === 'L_HAND') return 'LH';
+    if (tok === 'R_HAND') return 'RH';
+    if (tok === 'R_FOOT') return 'RF';
+    return tok;
+  });
+  // normalize to displayable tokens LH/RH/RF
+  stepState = new Array(sheet.length).fill('pending');
+  index = 0; attempts=0; correct=0; wrong=0;
+  matching = false;
+  document.getElementById('startPauseBtn').innerText = 'Start';
+  renderSheet();
+  updateProgress();
+}
+
+/* manual text input load button: when user edits box and leaves or presses enter */
+document.getElementById('sheetInput').addEventListener('blur', function(){
+  const txt = this.value.trim();
+  if (txt) loadSheetFromText(txt);
+});
+document.getElementById('sheetInput').addEventListener('keydown', function(e){
+  if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+    e.preventDefault();
+    loadSheetFromText(this.value);
+  }
+});
+
+/* start/pause/reset button wiring */
+document.getElementById('startPauseBtn').addEventListener('click', startPauseToggle);
+document.getElementById('resetBtn').addEventListener('click', resetSheet);
+
+/* ==========================
+   WebSocket connect / disconnect UI
+   ========================== */
+function connectWS(addr) {
+  if (ws) try { ws.close(); } catch(e){}
+  try {
+    ws = new WebSocket(addr);
+  } catch(e){
+    setConnStatus('Invalid address');
+    return;
+  }
+  setConnStatus('Connecting...');
+  ws.onopen = function(){
+    connected = true;
+    setConnStatus('Connected: ' + addr);
+    document.getElementById('connectBtn').disabled = true;
+    document.getElementById('disconnectBtn').disabled = false;
+  };
+  ws.onclose = function(){ connected = false; setConnStatus('Disconnected'); document.getElementById('connectBtn').disabled=false; document.getElementById('disconnectBtn').disabled=true; };
+  ws.onerror = function(){ setConnStatus('Connection error'); document.getElementById('connectBtn').disabled=false; };
+  ws.onmessage = function(ev){
+    // Handle incoming messages - assume payload is token like 'L_HAND' or 'LH'
+    const raw = ev.data;
+    // Map common variants (L_HAND, LH) to our tokens; we keep LH/RH/RF internal
+    let tokenNormalized = raw.trim();
+    tokenNormalized = tokenNormalized.replace(/L_HAND/i,'LH').replace(/R_HAND/i,'RH').replace(/R_FOOT/i,'RF');
+    // animate & match
+    // for UI functions we expect mapTokenToId which accepts LH/RH/RF or L_HAND etc.
+    // call onHitReceived with normalized (L_HAND equivalent)
+    // convert back to display-friendly (L_HAND etc) for animatePad convenience
+    const displayTok = tokenNormalized === 'LH' ? 'L_HAND' : tokenNormalized === 'RH' ? 'R_HAND' : tokenNormalized === 'RF' ? 'R_FOOT' : tokenNormalized;
+    // call matcher
+    onHitReceived(displayTok);
+  };
+}
+
+/* connect / disconnect buttons */
+document.getElementById('connectBtn').addEventListener('click', function(){
+  const addr = document.getElementById('wsAddr').value.trim();
+  if (!addr) { alert('Enter websocket address, e.g. ws://10.0.0.13:81'); return; }
+  connectWS(addr);
+});
+document.getElementById('disconnectBtn').addEventListener('click', function(){
+  if (ws) try { ws.close(); } catch(e){}
+  ws = null; connected=false; setConnStatus('Disconnected');
+  document.getElementById('connectBtn').disabled=false;
+  document.getElementById('disconnectBtn').disabled=true;
+});
+
+/* initial UI state */
+document.getElementById('disconnectBtn').disabled = true;
+setConnStatus('Not connected');
+renderSheet();
+updateProgress();
+
+/* small UX: double-click sheet step to play jump (for demo) */
+document.getElementById('sheetDisplay').addEventListener('dblclick', function(e){
+  const target = e.target;
+  if (!target.classList.contains('step')) return;
+  const steps = Array.from(document.querySelectorAll('.step'));
+  const idx = steps.indexOf(target);
+  if (idx >= 0) {
+    index = idx;
+    renderSheet();
+    updateProgress();
+  }
+});
+</script>
+</body>
+</html>
