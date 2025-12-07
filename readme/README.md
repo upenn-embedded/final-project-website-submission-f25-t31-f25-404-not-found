@@ -245,13 +245,11 @@ Because playback is non-blocking and mixer-driven, multiple hits from multiple n
 
 ### 3. Demo your device.
 
-[Demo mvp](https://drive.google.com/file/d/12pxA8k8FplrHLgwmTBjz-FNin05Deoml/view?usp=sharing)
+[Demo MVP](https://drive.google.com/file/d/12pxA8k8FplrHLgwmTBjz-FNin05Deoml/view?usp=sharing)
 
 ### 4. Have you achieved some or all of your Software Requirements Specification (SRS)?
 
 We achieved all the SRS we previously set up except for switching from Wi-Fi to Bluetooth, and we are planning to add an LCD display as a status monitor for our system.
-
-1. Show how you collected data and the outcomes.
 
    - Latency is negligible, so it is definitely shorter than 50 ms.  
    - Detection threshold is set to a moderate acceleration so that we have a balance between sensitivity and mis-triggers.  
@@ -261,8 +259,6 @@ We achieved all the SRS we previously set up except for switching from Wi-Fi to 
 ### 5. Have you achieved some or all of your Hardware Requirements Specification (HRS)?
 
 We achieve most of them except for the structural integrity.
-
-1. Show how you collected data and the outcomes.
 
    Sometimes a wire falls out of the slot and we need to rewire it. Since it is still in development, we don't want to solder those yet. Once we add the LCD module and reach the bare-metal complexity requirement, we will reinforce that for sure.
 
@@ -293,7 +289,7 @@ If you’ve never made a GitHub Pages website before, you can follow this webpag
 
 ### 1. Video
 
-[Virtual drum Kit](https://drive.google.com/file/d/1_NklKkRG3vqXawE7z8RuyhH2ok54xu6O/view?usp=sharing)
+[Virtual Drum Kit](https://drive.google.com/file/d/1_NklKkRG3vqXawE7z8RuyhH2ok54xu6O/view?usp=sharing)
 
 - The video must demonstrate your key functionality.  
 - The video must be 5 minutes or less.  
