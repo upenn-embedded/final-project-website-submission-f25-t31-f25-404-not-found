@@ -22,7 +22,7 @@
 
 **The drum kit you can wear. The rhythm you can take anywhere.**
 
-Our **Virtual Drum Kit** transforms natural hand and foot motion into instant, expressive percussion.
+Our **Virtual Drum Kit** transforms natural hand and foot motion into instant, expressive percussion.\
 No sticks. No drum set. Just movement — and music.
 
 Precision IMUs capture every strike,\
@@ -44,6 +44,10 @@ This is drumming, redesigned for the modern world.
 
 ### 2. Images
 
+**Block Diagram**
+
+![block_diagram_final](/images/README/block_diagram_final.png)
+
 [Insert final project images here]
 
 *Include photos of your device from a few angles. If you have a casework, show both the exterior and interior (where the good EE bits are!).*
@@ -56,13 +60,16 @@ Our Virtual Drum Kit successfully met the core functional expectations set in th
 
 #### 3.1 Software Requirements Specification (SRS) Results
 
-- Latency
+- Latency\
   Across all nodes, the perceived hit-to-sound latency was consistently below 100 ms. When testing by rapidly alternating hits between the left hand, right hand, and foot, the system preserved clear rhythmic coherence without detectable delay. This suggests that the Bluetooth transmission, event parsing, and I2S audio playback pipeline were operating within the intended latency bounds.
-- Reliable Hit Detection
+
+- Reliable Hit Detection\
   The IMU-based hit detection threshold, that is, 1.8 g for downward acceleration, worked robustly. During extended practice sessions, false triggers were extremely rare—estimated below 1%. Hit classification remained stable even under vigorous movement, indicating that the filtering logic on the ATmega328PB and threshold tuning were appropriate.
-- Stable Multi-Node Bluetooth Communication
+
+- Stable Multi-Node Bluetooth Communication\
   The ESP32 hub simultaneously managed connections from two hand nodes and one foot node with no observed packet drops or freezes during testing. Even after repeated power cycles and reconnections, startup remained smooth, fulfilling the requirement for seamless multi-node wireless operation.
-- Sound Effect Playback
+
+- Sound Effect Playback\
   All drum instruments including hi-hat, snare, kick successfully triggered distinct sound effects stored in ESP32 flash and streamed through I2S. Concurrent hits also played correctly, demonstrating that the audio system supported overlapping events.
 
 | ID     | Description                                                                                               | Validation Outcome                                                                                  |
@@ -76,13 +83,16 @@ Our Virtual Drum Kit successfully met the core functional expectations set in th
 
 #### 3.2 Hardware Requirements Specification (HRS) Results
 
-- Power Consumption
+- Power Consumption\
   Although exact current draw was not measured, the system was powered by a standard mobile power bank and successfully operated for several hours during demos. This meets the requirement for at least 1 hour of continuous playtime.
-- Audio Output
+
+- Audio Output\
   Subjectively, the speaker array provided sufficient volume to emulate an actual practice drum pad environment. Estimated output was around 60 dB, adequate for indoor use.
-- Wearability & Comfort
+
+- Wearability & Comfort\
   The hand nodes were lightweight and comfortable. The foot module—without the LCD—was even lighter. The addition of a handheld power-bank “drumstick” increased realism without adding fatigue.
-- IMU Responsiveness
+
+- IMU Responsiveness\
   The IMU on each node reliably detected the downward motion. The 1.8 g threshold proved to be a good tradeoff between sensitivity and noise rejection, requiring no major retuning.
 
 | ID     | Description                                                                                                                    | Validation Outcome                                                                                                      |
@@ -111,6 +121,14 @@ Reflecting on the entire development process, we also recognize several areas wh
 Despite these challenges, the final system successfully met its primary goals and demonstrated strong performance in real-world use. The ability to trigger hi-hat, snare, and kick sounds in rapid succession; to play with both hands and foot simultaneously; and to maintain low-latency audio playback all contributed to an experience that felt surprisingly close to playing a compact practice drum kit. The project not only deepened our understanding of embedded system design, but also highlighted how creative musical interfaces can be enabled through careful integration of sensors, communication protocols, and audio systems.
 
 Looking ahead, there are many exciting directions in which this project could evolve. Expanding the system to include additional instruments—such as toms, ride, and crash cymbals—would increase musical expressiveness. A custom PCB revision could improve robustness, reduce weight, and enhance ergonomics. Networked multiplayer or synchronized ensemble modes could enable collaborative drumming experiences. Exploring more advanced motion tracking technologies, such as UWB positioning or machine-learning-based gesture classification, could further increase precision and open new creative possibilities. Ultimately, the Virtual Drum Kit serves not only as a successful completion of a course project, but also as a platform for future innovation in portable, sensor-driven musical instruments.
+
+---
+
+## References
+
+ATmega328PB Datasheet
+
+LCD libraries in Lab 4
 
 ---
 
@@ -378,12 +396,3 @@ Structural integrity is a concern for the system since it basically relies on gl
 
 System-level complexity check (should be fixed by adding the LCD).
 
----
-
-
-
-## References
-
-ATmega328PB Datasheet
-
-LCD libraries in Lab 4
