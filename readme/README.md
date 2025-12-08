@@ -12,7 +12,7 @@
 | Kefei Bao        | kefeib@seas.upenn.edu   |
 
 **GitHub Repository URL:**  
-[hhttps://github.com/upenn-embedded/final-project-website-submission-f25-t31-f25-404-not-found.git](https://github.com/upenn-embedded/final-project-website-submission-f25-t31-f25-404-not-found.git)
+[https://github.com/upenn-embedded/final-project-website-submission-f25-t31-f25-404-not-found.git](https://github.com/upenn-embedded/final-project-website-submission-f25-t31-f25-404-not-found.git)
 
 **GitHub Pages Website URL:** [for final submission]*
 
@@ -37,6 +37,8 @@ And with our interactive Python GUI, your performance becomes visual — live hi
 
 **Portable. Immersive. Ready anywhere.**\
 This is drumming, redesigned for the modern world.
+
+---
 
 ### 1. Video
 
