@@ -6,15 +6,13 @@
 #include "i2c.h"
 #include "imu.h"
 
-// --------------------------------------------
-// Configuration
-// --------------------------------------------
-#define STRIKE_THRESHOLD   1.8f     // g – downward hit
-#define RESET_THRESHOLD   -0.2f    // g – upward recovery
+
+#define STRIKE_THRESHOLD   1.8f   
+#define RESET_THRESHOLD   -0.2f   
 
 #define LED_PORT   PORTB
 #define LED_DDR    DDRB
-#define LED_PIN    PB5             // Built-in LED
+#define LED_PIN    PB5            
 
 typedef enum {
     WAITING_FOR_STRIKE = 0,
@@ -23,15 +21,12 @@ typedef enum {
 
 int main(void)
 {
-    // UART
     uart_init();
     printf("UART Initialized.\r\n");
 
-    // LED output
     LED_DDR |= (1 << LED_PIN);
     LED_PORT &= ~(1 << LED_PIN);
 
-    // IMU INIT
     printf("Initializing IMU...\r\n");
     if (IMU_init(0x6B) < 0)
     {
@@ -47,20 +42,18 @@ int main(void)
 
     while (1)
     {
-        // Read accelerometer
         if (IMU_readAccBytes(buf) == 0)
         {
             int16_t raw_z = (int16_t)((buf[5] << 8) | buf[4]);
-            az = raw_z / 4096.0f;  // assuming ±16g → 4096 LSB/g
-
+            az = raw_z / 4096.0f; 
             switch(state)
             {
                 case WAITING_FOR_STRIKE:
                     if (az > STRIKE_THRESHOLD)
                     {
                         //printf("DOWNWARD STRIKE DETECTED! Z=%.2f g\r\n", az);
-                        LED_PORT |= (1 << LED_PIN);  // turn LED ON
-                        uart_send('3', NULL);        // send '1' via UART to ESP32
+                        LED_PORT |= (1 << LED_PIN);  
+                        uart_send('3', NULL);        
                         state = STRIKE_DETECTED_WAIT_UP;
                     }
                     break;
@@ -69,7 +62,7 @@ int main(void)
                     if (az < RESET_THRESHOLD)
                     {
                         //printf("UPWARD MOTION DETECTED. Ready for next strike. Z=%.2f g\r\n", az);
-                        LED_PORT &= ~(1 << LED_PIN); // turn LED OFF
+                        LED_PORT &= ~(1 << LED_PIN); 
                         state = WAITING_FOR_STRIKE;
                     }
                     break;
@@ -80,6 +73,6 @@ int main(void)
             //printf("I2C READ ERROR\r\n");
         }
 
-        _delay_ms(20);  // 50 Hz loop
+        _delay_ms(20);  
     }
 }

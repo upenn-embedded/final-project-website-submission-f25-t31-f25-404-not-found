@@ -8,7 +8,7 @@
 
 #define PEAK_THRESHOLD      0.0f     // Peak must be below -1.0g (downward)
 #define BUFFER_SIZE         3         // Store 3 samples for peak detection
-#define MIN_SAMPLES_BETWEEN 20        // ~100ms gap between taps (at 200Hz)
+#define MIN_SAMPLES_BETWEEN 20        // ~100ms gap between taps (
 
 #define LED_PORT   PORTB
 #define LED_DDR    DDRB
@@ -39,7 +39,7 @@ int main(void)
             int16_t raw_z = (int16_t)((buf[5] << 8) | buf[4]);
             float az = raw_z / 4096.0f;
 
-            // Store in circular buffer
+
             az_buffer[buf_index] = az;
             buf_index = (buf_index + 1) % BUFFER_SIZE;
             
@@ -50,10 +50,8 @@ int main(void)
             
             samples_since_tap++;
 
-            // Peak detection: need full buffer
             if (samples_filled >= BUFFER_SIZE && samples_since_tap >= MIN_SAMPLES_BETWEEN)
             {
-                // Get indices: prev, current (peak candidate), next
                 uint8_t prev_idx = (buf_index + BUFFER_SIZE - 2) % BUFFER_SIZE;
                 uint8_t curr_idx = (buf_index + BUFFER_SIZE - 1) % BUFFER_SIZE;
                 uint8_t next_idx = buf_index;
@@ -62,21 +60,19 @@ int main(void)
                 float curr = az_buffer[curr_idx];
                 float next = az_buffer[next_idx];
                 
-                // Check if current is a downward peak (most negative)
-                // curr < PEAK_THRESHOLD: must be strong downward motion
-                // curr < prev && curr < next: curr is lower than neighbors (peak)
+             
                 if (curr < PEAK_THRESHOLD && curr < prev && curr < next)
                 {
                     LED_PORT |= (1 << LED_PIN);
                     uart_send('3', NULL);
                     samples_since_tap = 0;
                     
-                    _delay_ms(50);  // Brief LED flash
+                    _delay_ms(50);  
                     LED_PORT &= ~(1 << LED_PIN);
                 }
             }
         }
 
-        _delay_ms(5);  // 200 Hz sampling
+        _delay_ms(5);  
     }
 }

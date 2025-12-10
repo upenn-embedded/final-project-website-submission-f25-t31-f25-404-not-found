@@ -1,9 +1,34 @@
 [![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/gnHZBlmB)
 
-# final-project-skeleton
+<!-- # ***404 Not Found*** -->
+
+<!-- Hero Section -->
+<div style="display:flex; justify-content: space-between; align-items: center; flex-wrap: wrap; background:#f5f7fa; padding:2rem 1rem; border-radius:16px; box-shadow:0 8px 20px rgba(0,0,0,0.05); margin-bottom:2rem;">
+
+  <div style="flex:1; min-width:250px;">
+    <h1 style="font-size:2rem; font-weight:900; margin:0; line-height:1.1; color:#1a1a1a;">
+      🥁 Virtual Drum Kit 🎶<br>
+    </h1>
+  </div>
+
+  <div style="display:flex; flex-direction:column; align-items:flex-end; gap:0.5rem; min-width:250px;">
+    <p style="margin:0; font-size:1.25rem; color:#333; text-align:center;">
+      No sticks. No drum set.<br>
+      Just movement — and music.<br>
+      <a class="button" href="https://github.com/upenn-embedded/virtual-drum-kit/archive/refs/heads/main.zip" title="Download ZIP">
+        ⬇️
+      </a>
+      <a class="button" href="https://drive.google.com/file/d/1_NklKkRG3vqXawE7z8RuyhH2ok54xu6O/view?usp=sharing" title="Watch Demo">
+        ▶️
+      </a>
+    </p>
+  </div>
+
+</div>
+
 
 **Team Number:** 31  
-**Team Name:** 404 not found
+**Team Name:** 404 Not Found
 
 | Team Member Name | Email Address           |
 | ---------------- | ----------------------- |
@@ -11,14 +36,17 @@
 | Haoran Liang     | liang9@seas.upenn.edu   |
 | Kefei Bao        | kefeib@seas.upenn.edu   |
 
+---
+
 **GitHub Repository URL:**  
 [https://github.com/upenn-embedded/final-project-website-submission-f25-t31-f25-404-not-found.git](https://github.com/upenn-embedded/final-project-website-submission-f25-t31-f25-404-not-found.git)
 
-**GitHub Pages Website URL:** [for final submission]*
+**GitHub Pages Website URL:** 
+[https://upenn-embedded.github.io/virtual-drum-kit/](https://upenn-embedded.github.io/virtual-drum-kit/)
 
 ---
 
-## Final Project Report
+# Final Project Report
 
 **The drum kit you can wear. The rhythm you can take anywhere.**
 
@@ -40,27 +68,37 @@ This is drumming, redesigned for the modern world.
 
 ---
 
-### 1. Video
+## 1. Video
 
-[Virtual drum Kit](https://drive.google.com/file/d/1_NklKkRG3vqXawE7z8RuyhH2ok54xu6O/view?usp=sharing)
+[Virtual Drum Kit](https://drive.google.com/file/d/1_NklKkRG3vqXawE7z8RuyhH2ok54xu6O/view?usp=sharing)
 
-### 2. Images
+---
+
+## 2. Images
 
 **Block Diagram**
 
 ![block_diagram_final](/images/README/block_diagram_final.png)
 
-[Insert final project images here]
+**Devices**
 
-*Include photos of your device from a few angles. If you have a casework, show both the exterior and interior (where the good EE bits are!).*
+![all](/images/README/all.jpg)
+![speaker_box](/images/README/speaker_box.png)
+![speaker_box_inside](/images/README/speaker_box_inside.png)
+![wrist_strap](/images/README/wrist_strap.png)
+![shoe](/images/README/shoe.png)
+
+**GUI**
+
+![GUI](/images/README/GUI.png)
 
 ---
 
-### 3. Results
+## 3. Results
 
 Our Virtual Drum Kit successfully met the core functional expectations set in the proposal. Although we relied primarily on qualitative and empirical validation rather than instrumented measurement, the system’s performance during repeated testing and the final demo demonstrates that the essential software requirements were achieved. Also, all the results are shown in the video above.
 
-#### 3.1 Software Requirements Specification (SRS) Results
+### 3.1 Software Requirements Specification (SRS) Results
 
 - Latency\
   Across all nodes, the perceived hit-to-sound latency was consistently below 100 ms. When testing by rapidly alternating hits between the left hand, right hand, and foot, the system preserved clear rhythmic coherence without detectable delay. This suggests that the Bluetooth transmission, event parsing, and I2S audio playback pipeline were operating within the intended latency bounds.
@@ -82,8 +120,7 @@ Our Virtual Drum Kit successfully met the core functional expectations set in th
 | SRS-03 | Multiple sound effects shall be triggered based on detected motion direction. | Confirmed. All hi-hat, snare, and kick sounds triggered consistently. |
 
 
-
-#### 3.2 Hardware Requirements Specification (HRS) Results
+### 3.2 Hardware Requirements Specification (HRS) Results
 
 - Power Consumption\
   Although exact current draw was not measured, the system was powered by a standard mobile power bank and successfully operated for several hours during demos. This meets the requirement for at least 1 hour of continuous playtime.
@@ -92,7 +129,7 @@ Our Virtual Drum Kit successfully met the core functional expectations set in th
   Subjectively, the speaker array provided sufficient volume to emulate an actual practice drum pad environment. Estimated output was around 60 dB, adequate for indoor use.
 
 - Wearability & Comfort\
-  The hand nodes were lightweight and comfortable. The foot module—without the LCD—was even lighter. The addition of a handheld power-bank “drumstick” increased realism without adding fatigue.
+  The hand nodes were lightweight and comfortable. The foot module without the LCD was even lighter. The addition of a handheld power-bank “drumstick” increased realism without adding fatigue.
 
 - IMU Responsiveness\
   The IMU on each node reliably detected the downward motion. The 1.8 g threshold proved to be a good tradeoff between sensitivity and noise rejection, requiring no major retuning.
@@ -106,7 +143,7 @@ Our Virtual Drum Kit successfully met the core functional expectations set in th
 
 ---
 
-### 4. Conclusion
+## 4. Conclusion
 
 The development of our Virtual Drum Kit was both a technically ambitious and highly rewarding experience. Throughout the project, we explored the intersection of embedded sensing, wireless communication, human–computer interaction, and real-time audio synthesis. Although our initial proposal outlined a vision for a fully wearable, low-latency drumming system using IMUs and Bluetooth-connected nodes, the final prototype exceeded our expectations in several important ways. The system ultimately achieved stable multi-node connectivity, responsive hit detection, intuitive user feedback, and a surprisingly immersive playing experience. These outcomes demonstrate not only the feasibility of a portable virtual instrument, but also the potential of embedded systems to emulate traditionally mechanical musical interfaces.
 
@@ -133,6 +170,8 @@ ATmega328PB Datasheet
 LCD libraries in Lab 4
 
 ---
+
+# Previous Work
 
 ## Final Project Proposal
 
@@ -286,6 +325,8 @@ Next week, we plan to move from sensing-only to end-to-end event transmission an
 - Start implementing the audio driver on the ESP32 side by configuring the I2S peripheral and playing simple test tones or sample clips through the amplifier and speaker once the parts arrive.
 - Integrate the existing motion detection code with the Bluetooth path so that a physical swing on the node can trigger a corresponding event at the hub, preparing us for full drum sound playback in the following sprint.
 
+---
+
 ## Sprint Review #2
 
 ### Last week's progress
@@ -360,26 +401,22 @@ Because playback is non-blocking and mixer-driven, multiple hits from multiple n
 
 ### 3. Demo your device.
 
-[Demo mvp](https://drive.google.com/file/d/12pxA8k8FplrHLgwmTBjz-FNin05Deoml/view?usp=sharing)
+[Demo MVP](https://drive.google.com/file/d/12pxA8k8FplrHLgwmTBjz-FNin05Deoml/view?usp=sharing)
 
 ### 4. Have you achieved some or all of your Software Requirements Specification (SRS)?
 
 We achieved all the SRS we previously set up except for switching from Wi-Fi to Bluetooth, and we are planning to add an LCD display as a status monitor for our system.
 
-1. Show how you collected data and the outcomes.
-
-   - Latency is negligible, so it is definitely shorter than 50 ms.  
-   - Detection threshold is set to a moderate acceleration so that we have a balance between sensitivity and mis-triggers.  
-   - Once turned on, all components are connected seamlessly and no abrupt disconnection has been observed.  
-   - Multiple sounds can be played at the same time, achieved by the mixer.
+- Latency is negligible, so it is definitely shorter than 50 ms.  
+- Detection threshold is set to a moderate acceleration so that we have a balance between sensitivity and mis-triggers.  
+- Once turned on, all components are connected seamlessly and no abrupt disconnection has been observed.  
+- Multiple sounds can be played at the same time, achieved by the mixer.
 
 ### 5. Have you achieved some or all of your Hardware Requirements Specification (HRS)?
 
 We achieve most of them except for the structural integrity.
 
-1. Show how you collected data and the outcomes.
-
-   Sometimes a wire falls out of the slot and we need to rewire it. Since it is still in development, we don't want to solder those yet. Once we add the LCD module and reach the bare-metal complexity requirement, we will reinforce that for sure.
+  Sometimes a wire falls out of the slot and we need to rewire it. Since it is still in development, we don't want to solder those yet. Once we add the LCD module and reach the bare-metal complexity requirement, we will reinforce that for sure.
 
 ### 6. Show off the remaining elements that will make your project whole: mechanical casework, supporting graphical user interface (GUI), web portal, etc.
 
@@ -390,11 +427,8 @@ We achieve most of them except for the structural integrity.
 
 Structural integrity is a concern for the system since it basically relies on glue and pin/wire friction right now.
 
-1. How do you plan to de-risk this?
-
-   We will have a chassis and wearable platform in the following week to address this.
+We will have a chassis and wearable platform in the following week to address this.
 
 ### 8. What questions or help do you need from the teaching team?
 
 System-level complexity check (should be fixed by adding the LCD).
-

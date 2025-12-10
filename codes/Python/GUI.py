@@ -15,25 +15,20 @@ class DrumKitApp:
         self.root.geometry("1400x800")
         self.root.configure(bg='#071426')
         
-        # Initialize pygame mixer for audio with multiple channels for mixing
         pygame.mixer.init(frequency=44100, size=-16, channels=2, buffer=512)
-        pygame.mixer.set_num_channels(16)  # Allow 16 simultaneous sounds
-        
-        # Default audio file paths (UPDATE THESE PATHS)
+        pygame.mixer.set_num_channels(16)  
         self.default_audio_paths = {
             'R_HAND': r'snare.wav',
             'L_HAND': r'hihat.wav',
             'R_FOOT': r'kick.wav'
         }
         
-        # Audio files
         self.sounds = {
             'L_HAND': None,
             'R_HAND': None,
             'R_FOOT': None
         }
         
-        # State variables
         self.serial_port = None
         self.connected = False
         self.sheet = []
@@ -46,7 +41,6 @@ class DrumKitApp:
         self.read_thread = None
         self.running = False
         
-        # Live feed history
         self.hit_history = []
         self.max_history = 20
         
@@ -54,7 +48,6 @@ class DrumKitApp:
         self.load_default_audio()
         
     def setup_ui(self):
-        # Header
         header = tk.Frame(self.root, bg='#071426')
         header.pack(fill='x', padx=20, pady=15)
         
@@ -66,7 +59,6 @@ class DrumKitApp:
         tk.Label(title_frame, text="Virtual Drum Kit • Sheet Matcher • Live Tracking", 
                 font=('Poppins', 11), fg='#8795a1', bg='#071426').pack(anchor='w')
         
-        # Serial controls
         controls = tk.Frame(header, bg='#071426')
         controls.pack(side='right')
         
@@ -93,22 +85,18 @@ class DrumKitApp:
                                        relief='flat', padx=15, pady=5, cursor='hand2', state='disabled')
         self.disconnect_btn.grid(row=0, column=4, padx=5)
         
-        # Main content area
         main = tk.Frame(self.root, bg='#071426')
         main.pack(fill='both', expand=True, padx=20, pady=10)
         
-        # Left panel (drums + sheet)
         left = tk.Frame(main, bg='#0b2033', relief='raised', bd=1)
         left.pack(side='left', fill='both', expand=True, padx=(0, 10))
         
-        # Audio loading section
         audio_frame = tk.Frame(left, bg='#0f1a26', relief='raised', bd=1)
         audio_frame.pack(fill='x', padx=15, pady=15)
         
         tk.Label(audio_frame, text="🎵 Audio Files", fg='#e8f0f6', bg='#0f1a26', 
                 font=('Poppins', 11, 'bold')).pack(anchor='w', padx=10, pady=10)
         
-        # Audio file buttons
         audio_btns = tk.Frame(audio_frame, bg='#0f1a26')
         audio_btns.pack(fill='x', padx=10, pady=(0, 10))
         
@@ -126,7 +114,6 @@ class DrumKitApp:
             status.pack()
             setattr(self, f'audio_status_{key}', status)
         
-        # Drum pads
         drum_frame = tk.Frame(left, bg='#0b2033')
         drum_frame.pack(pady=15)
         
@@ -146,12 +133,10 @@ class DrumKitApp:
             drum.create_text(25, 20, text=label, fill='#8795a1', font=('Poppins', 9, 'bold'))
             drum.create_text(75, 75, text=name, fill='white', font=('Poppins', 12, 'bold'))
             
-            # Bind click to play sound
             drum.bind('<Button-1>', lambda e, k=key: self.play_sound(k))
             
             self.drums[key] = drum
         
-        # Sheet area with scrollable display
         sheet_frame = tk.Frame(left, bg='#0f1a26', relief='raised', bd=1)
         sheet_frame.pack(fill='both', expand=True, padx=15, pady=15)
         
@@ -162,7 +147,6 @@ class DrumKitApp:
                                    font=('Poppins', 11, 'bold'), relief='flat', padx=10, pady=8)
         self.sheet_input.pack(fill='x', padx=10, pady=5)
         
-        # Sheet controls
         sheet_controls = tk.Frame(sheet_frame, bg='#0f1a26')
         sheet_controls.pack(pady=8)
         
@@ -183,7 +167,6 @@ class DrumKitApp:
                  bg='#3ea0ff', fg='white', font=('Poppins', 9, 'bold'),
                  relief='flat', padx=15, pady=6, cursor='hand2').grid(row=0, column=3, padx=4)
         
-        # Sheet display with canvas for scrolling
         display_container = tk.Frame(sheet_frame, bg='#0f1a26')
         display_container.pack(fill='both', expand=True, padx=10, pady=10)
         
@@ -204,23 +187,19 @@ class DrumKitApp:
         
         self.sheet_canvas = sheet_canvas
         
-        # Right panel (stats + live feed)
         right = tk.Frame(main, bg='#0b2033', width=450, relief='raised', bd=1)
         right.pack(side='right', fill='both')
         right.pack_propagate(False)
         
-        # Stats panel at top
         stats_panel = tk.Frame(right, bg='#0f1a26', relief='raised', bd=1)
         stats_panel.pack(fill='x', padx=15, pady=15)
         
         tk.Label(stats_panel, text="📊 Performance Stats", fg='#e8f0f6', bg='#0f1a26', 
                 font=('Poppins', 12, 'bold')).pack(anchor='w', padx=10, pady=10)
         
-        # Stats grid
         stats_grid = tk.Frame(stats_panel, bg='#0f1a26')
         stats_grid.pack(fill='x', padx=10, pady=(0, 15))
         
-        # Progress
         prog_card = tk.Frame(stats_grid, bg='#1a2a3d', relief='flat', bd=0)
         prog_card.grid(row=0, column=0, padx=5, pady=5, sticky='ew')
         tk.Label(prog_card, text="Progress", fg='#8795a1', bg='#1a2a3d', 
@@ -229,7 +208,6 @@ class DrumKitApp:
                                       bg='#1a2a3d', font=('Poppins', 16, 'bold'))
         self.progress_label.pack(pady=(0, 8))
         
-        # Attempts
         att_card = tk.Frame(stats_grid, bg='#1a2a3d', relief='flat', bd=0)
         att_card.grid(row=0, column=1, padx=5, pady=5, sticky='ew')
         tk.Label(att_card, text="Attempts", fg='#8795a1', bg='#1a2a3d', 
@@ -238,8 +216,6 @@ class DrumKitApp:
                                       bg='#1a2a3d', font=('Poppins', 16, 'bold'))
         self.attempts_label.pack(pady=(0, 8))
         
-        # Second row
-        # Correct
         cor_card = tk.Frame(stats_grid, bg='#1a2a3d', relief='flat', bd=0)
         cor_card.grid(row=1, column=0, padx=5, pady=5, sticky='ew')
         tk.Label(cor_card, text="✅ Correct", fg='#8795a1', bg='#1a2a3d', 
@@ -248,7 +224,6 @@ class DrumKitApp:
                                      bg='#1a2a3d', font=('Poppins', 16, 'bold'))
         self.correct_label.pack(pady=(0, 8))
         
-        # Wrong
         wrong_card = tk.Frame(stats_grid, bg='#1a2a3d', relief='flat', bd=0)
         wrong_card.grid(row=1, column=1, padx=5, pady=5, sticky='ew')
         tk.Label(wrong_card, text="❌ Wrong", fg='#8795a1', bg='#1a2a3d', 
@@ -257,11 +232,9 @@ class DrumKitApp:
                                    bg='#1a2a3d', font=('Poppins', 16, 'bold'))
         self.wrong_label.pack(pady=(0, 8))
         
-        # Configure grid weights
         stats_grid.columnconfigure(0, weight=1)
         stats_grid.columnconfigure(1, weight=1)
         
-        # Accuracy - Large display
         acc_card = tk.Frame(stats_panel, bg='#1a2a3d', relief='flat', bd=0)
         acc_card.pack(fill='x', padx=10, pady=(5, 15))
         tk.Label(acc_card, text="🎯 Accuracy", fg='#8795a1', bg='#1a2a3d', 
@@ -270,14 +243,12 @@ class DrumKitApp:
                                       bg='#1a2a3d', font=('Poppins', 32, 'bold'))
         self.accuracy_label.pack(pady=(0, 12))
         
-        # Live Feed Panel
         live_feed_panel = tk.Frame(right, bg='#0f1a26', relief='raised', bd=1)
         live_feed_panel.pack(fill='both', expand=True, padx=15, pady=(0, 15))
         
         tk.Label(live_feed_panel, text="🎵 Live Hit Feed", fg='#e8f0f6', bg='#0f1a26', 
                 font=('Poppins', 12, 'bold')).pack(anchor='w', padx=10, pady=10)
         
-        # Create canvas with scrollbar for live feed
         feed_container = tk.Frame(live_feed_panel, bg='#0f1a26')
         feed_container.pack(fill='both', expand=True, padx=10, pady=(0, 10))
         

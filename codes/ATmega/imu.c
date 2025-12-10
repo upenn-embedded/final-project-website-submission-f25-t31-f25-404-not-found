@@ -3,7 +3,7 @@
 #include <stdint.h>
 #include <util/delay.h>
 
-/* Register definitions */
+
 #define LSM_WHO_AM_I      0x0F
 #define LSM_CTRL1_XL      0x10
 #define LSM_CTRL3_C       0x12
@@ -11,13 +11,12 @@
 #define LSM_STATUS        0x17
 #define LSM_OUTX_L_XL     0x28
 
-/* Expected WHO_AM_I value */
+
 #define LSM6_WHO_AM_I_VAL 0x6C
 
-/* Sensitivity for ±16g mode */
-#define LSM6_ACCEL_16G_LSB_mg   (0.488f)   // mg/LSB
+#define LSM6_ACCEL_16G_LSB_mg   (0.488f)   
 
-static uint8_t imu_addr = 0x00; /* 7-bit */
+static uint8_t imu_addr = 0x00; 
 
 int IMU_init(uint8_t addr7)
 {
@@ -32,20 +31,14 @@ int IMU_init(uint8_t addr7)
     if (who != LSM6_WHO_AM_I_VAL)
         return -1;
 
-    /* CTRL3_C: BDU = 1, IF_INC = 1 */
     if (I2C_writeRegister(imu_addr, LSM_CTRL3_C, 0x44) != 0)
         return -1;
 
-    /*
-     * CTRL1_XL:
-     * ODR = 104 Hz (0b0100 << 4 = 0x40)
-     * FS = ±16g     (0b11   << 2 = 0x0C)
-     * Combined value: 0x4C
-     */
+
     if (I2C_writeRegister(imu_addr, LSM_CTRL1_XL, 0x4C) != 0)
         return -1;
 
-    /* CTRL9_XL: Enable X/Y/Z axes */
+
     if (I2C_writeRegister(imu_addr, LSM_CTRL9_XL, 0x38) != 0)
         return -1;
 

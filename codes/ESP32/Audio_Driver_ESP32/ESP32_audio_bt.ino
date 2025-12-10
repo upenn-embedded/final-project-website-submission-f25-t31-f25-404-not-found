@@ -2,23 +2,23 @@
 #include "driver/i2s.h"
 #include "WavData.h"
 HardwareSerial HC05(2);
-// ---------------- BUTTON PINS ----------------
+
 #define BTN1 13
 #define BTN2 12
 #define BTN3 14
 
-// ---------------- I2S PINS ----------------
+
 #define BCLK 27
 #define LRCLK 26
 #define DIN 25
 
-// ---------------- BLUETOOTH ----------------
+
 BluetoothSerial SerialBT;
 
 // HC-05 MAC address
 uint8_t hc05Address[6] = {0x00, 0x18, 0x91, 0xD6, 0xD7, 0x26};
 
-// Playback structure
+
 typedef struct {
     const unsigned char* data;
     uint32_t idx;
@@ -29,9 +29,7 @@ typedef struct {
 #define MAX_SOUNDS 3
 PLAYBACK_T sounds[MAX_SOUNDS];
 
-// -----------------------------------------------------------
-// I2S CONFIG
-// -----------------------------------------------------------
+
 static const i2s_config_t i2s_config = {
     .mode = (i2s_mode_t)(I2S_MODE_MASTER | I2S_MODE_TX),
     .sample_rate = 44100,
@@ -52,17 +50,15 @@ static const i2s_pin_config_t pin_config = {
     .data_in_num = I2S_PIN_NO_CHANGE
 };
 
-// -----------------------------------------------------------
-// Start playing a WAV file (non-blocking)
-// -----------------------------------------------------------
+
 void playSound(const unsigned char* wav)
 {
     for (int i = 0; i < MAX_SOUNDS; i++)
     {
         if (!sounds[i].active)
         {
-            uint32_t dataSize = *(uint32_t*)(wav + 40);   // read byte count at header offset 40
-            sounds[i].data = wav + 44;                    // skip header
+            uint32_t dataSize = *(uint32_t*)(wav + 40);   
+            sounds[i].data = wav + 44;                    
             sounds[i].idx = 0;
             sounds[i].size = dataSize;
             sounds[i].active = true;
@@ -71,9 +67,7 @@ void playSound(const unsigned char* wav)
     }
 }
 
-// -----------------------------------------------------------
-// MIXER: mixes all active sounds and sends samples to I2S
-// -----------------------------------------------------------
+
 void IRAM_ATTR mixAudio()
 {
     int16_t left = 0;
@@ -109,9 +103,7 @@ void IRAM_ATTR mixAudio()
     i2s_write(I2S_NUM_0, frame, 4, &bw, portMAX_DELAY);
 }
 
-// -----------------------------------------------------------
-// SETUP
-// -----------------------------------------------------------
+
 void setup()
 {
     Serial.begin(9600);
@@ -122,22 +114,22 @@ void setup()
     pinMode(BTN2, INPUT_PULLUP);
     pinMode(BTN3, INPUT_PULLUP);
 
-    // Setup I2S
+
     i2s_driver_install(I2S_NUM_0, &i2s_config, 0, NULL);
     i2s_set_pin(I2S_NUM_0, &pin_config);
     i2s_set_sample_rates(I2S_NUM_0, 44100);
 
-    // Setup Bluetooth
-    if (!SerialBT.begin("ESP32_MASTER", true)) {  // true = master mode
+
+    if (!SerialBT.begin("ESP32_MASTER", true)) {  
         Serial.println("Failed to start BT in master mode");
         while (1) { delay(1000); }
     }
     Serial.println("ESP32 Bluetooth started in master mode");
 
-    // Set PIN if needed
+
     SerialBT.setPin("1234",4);
 
-    // Try initial connection
+
     if (SerialBT.connect(hc05Address)) {
         Serial.println("Connected to HC-05!");
     } else {
@@ -145,17 +137,14 @@ void setup()
     }
 }
 
-// -----------------------------------------------------------
-// MAIN LOOP
-// -----------------------------------------------------------
+
 void loop()
 {
-    // Handle physical buttons
+
     if (digitalRead(BTN1) == 0) playSound(snare);
     if (digitalRead(BTN2) == 0) playSound(hihat);
     if (digitalRead(BTN3) == 0) playSound(kick);
 
-    // Handle internal Bluetooth input
     while (SerialBT.available())
     {
         char cmd = SerialBT.read();
@@ -169,7 +158,6 @@ void loop()
         }
     }
 
-    // Handle wired HC-05 input (UART2)
     while (HC05.available())
     {
         char cmd = HC05.read();
@@ -182,7 +170,6 @@ void loop()
             case '3': playSound(kick); break;
         }
     }
-    // --- UART0 (Serial, used after USB is removed) ---
     while (Serial.available())
     {
         char cmd = Serial.read();
@@ -197,7 +184,6 @@ void loop()
     }
 
 
-    // Optional: auto-reconnect if disconnected
     static unsigned long lastTry = 0;
     if (!SerialBT.connected() && millis() - lastTry > 5000)
     {
@@ -206,5 +192,5 @@ void loop()
         SerialBT.connect(hc05Address);
     }
 
-    mixAudio(); // continuously mix + output
+    mixAudio(); 
 }
